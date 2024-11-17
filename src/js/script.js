@@ -8,6 +8,7 @@
 const select = {
   templateOf: {
     menuProduct: "#template-menu-product",
+    cartProduct: '#template-cart-product',
     },
     containerOf: {
       menu: '#product-list',
@@ -28,10 +29,28 @@ const select = {
     },
     widgets: {
       amount: {
-        input: 'input[name="amount"]',
+        input: 'input.amount',
         linkDecrease: 'a[href="#less"]',
         linkIncrease: 'a[href="#more"]',
       },
+    },
+    cart: {
+      productList: '.cart__order-summary',
+      toggleTrigger: '.cart__summary',
+      totalNumber: `.cart__total-number`,
+      totalPrice: '.cart__total-price strong, .cart__order-total .cart__order-price-sum strong',
+      subtotalPrice: '.cart__order-subtotal .cart__order-price-sum strong',
+      deliveryFee: '.cart__order-delivery .cart__order-price-sum strong',
+      form: '.cart__order',
+      formSubmit: '.cart__order [type="submit"]',
+      phone: '[name="phone"]',
+      address: '[name="address"]',
+    },
+    cartProduct: {
+      amountWidget: '.widget-amount',
+      price: '.cart__product-price',
+      edit: '[href="#edit"]',
+      remove: '[href="#remove"]',
     },
   };
 
@@ -41,20 +60,27 @@ const select = {
       wrapperActive: 'active',
       imageVisible: 'active',
     },
+    cart: {
+      wrapperActive: 'active',
+    },
   };
 
 //  ustawienia naszego skryptu, wszystkie wartości, które wygodniej będzie zmieniać w jednym miejscu
-  const settings = {
-    amountWidget: {
-      defaultValue: 1,
-      defaultMin: 0,
-      defaultMax: 10,
-    }
-  };
+const settings = {
+  amountWidget: {
+    defaultValue: 1,
+    defaultMin: 1,
+    defaultMax: 9,
+  },
+  cart: {
+    defaultDeliveryFee: 20,
+  },
+}
 
 //  szablony Handlebars, do których wykorzystujemy selektory z obiektu select
   const templates = {
     menuProduct: Handlebars.compile(document.querySelector(select.templateOf.menuProduct).innerHTML),
+    cartProduct: Handlebars.compile(document.querySelector(select.templateOf.cartProduct).innerHTML),
   };
 
   class Product {
@@ -90,20 +116,22 @@ const select = {
 
     getElelments(){
       const thisProduct = this;
+      thisProduct.dom = {};
 
-      thisProduct.accordionTrigger = thisProduct.element.querySelector(select.menuProduct.clickable);
-      //console.log(thisProduct.accordionTrigger);
-      thisProduct.form = thisProduct.element.querySelector(select.menuProduct.form);
-      //console.log(thisProduct.form);
-      thisProduct.formInputs = thisProduct.form.querySelectorAll(select.all.formInputs);
-      //console.log(thisProduct.formInputs);
-      thisProduct.cartButton = thisProduct.element.querySelector(select.menuProduct.cartButton);
-      //console.log(thisProduct.cartButton);
-      thisProduct.priceElem = thisProduct.element.querySelector(select.menuProduct.priceElem);
-      //console.log(thisProduct.priceElem);
-      thisProduct.imageWrapper = thisProduct.element.querySelector(select.menuProduct.imageWrapper);
 
-      thisProduct.amountWidgetElement = thisProduct.element.querySelector(select.menuProduct.amountWidget);
+      thisProduct.dom.accordionTrigger = thisProduct.element.querySelector(select.menuProduct.clickable);
+      //console.log(thisProduct.dom.accordionTrigger);
+      thisProduct.dom.form = thisProduct.element.querySelector(select.menuProduct.form);
+      //console.log(thisProduct.dom.form);
+      thisProduct.dom.formInputs = thisProduct.dom.form.querySelectorAll(select.all.formInputs);
+      //console.log(thisProduct.dom.formInputs);
+      thisProduct.dom.cartButton = thisProduct.element.querySelector(select.menuProduct.cartButton);
+      //console.log(thisProduct.dom.cartButton);
+      thisProduct.dom.priceElem = thisProduct.element.querySelector(select.menuProduct.priceElem);
+      //console.log(thisProduct.dom.priceElem);
+      thisProduct.dom.imageWrapper = thisProduct.element.querySelector(select.menuProduct.imageWrapper);
+
+      thisProduct.dom.amountWidgetElement = thisProduct.element.querySelector(select.menuProduct.amountWidget);
     }
 
     initAccordion(){
@@ -114,7 +142,7 @@ const select = {
       // console.log(clickableTrigger);
      
       // start: add event listener to clickable trigger on event click
-      thisProduct.accordionTrigger.addEventListener('click',function(event){
+      thisProduct.dom.accordionTrigger.addEventListener('click',function(event){
         // prevent default action for event 
         event.preventDefault();
         // toggle active class on thisProduct.element 
@@ -137,20 +165,20 @@ const select = {
       const thisProduct = this;
 
       // po zatwierdzeniu formularza uruchamiamy funkcję processOrder
-      thisProduct.form.addEventListener('submit', function(event){
+      thisProduct.dom.form.addEventListener('submit', function(event){
         event.preventDefault();
         thisProduct.processOrder();
       });
 
       // po zmianie w inputach formularza (zaznaczenie / odznaczenie opcji) uruchamiamy funkcję processOrder
-      for(let input of thisProduct.formInputs){
+      for(let input of thisProduct.dom.formInputs){
         input.addEventListener('change', function(){
           thisProduct.processOrder();
         });
       }
 
       // po kliknięciu w przycisk karty uruchamiamy funkcję processOrder
-      thisProduct.cartButton.addEventListener('click', function(event){
+      thisProduct.dom.cartButton.addEventListener('click', function(event){
         event.preventDefault();
         thisProduct.processOrder();
       });
@@ -160,7 +188,7 @@ const select = {
       const thisProduct = this;
       
       // convert form to object structure e.g. { sauce: ['tomato'], toppings: ['olives',['redPeppers']] } 
-      const formData = utils.serializeFormToObject(thisProduct.form); //dane z formularzy - ktore są zaznaczone
+      const formData = utils.serializeFormToObject(thisProduct.dom.form); //dane z formularzy - ktore są zaznaczone
 
       //set price to default price
       let price = thisProduct.data.price;  // domyślna cena 
@@ -177,7 +205,7 @@ const select = {
           //console.log(optionId, option);
           const optionImageClass = '.'+ paramId + '-' + optionId;
           
-          const optionImage = thisProduct.imageWrapper.querySelector(optionImageClass);
+          const optionImage = thisProduct.dom.imageWrapper.querySelector(optionImageClass);
           // check if there is param with a name of paramId in formData and if it includes optionId
           if(formData[paramId] && formData[paramId].includes(optionId)) {
             // check if the option is not default
@@ -205,13 +233,13 @@ const select = {
       //multiply price by amount
       price *= thisProduct.amountWidget.value;
       //update calculated price in the html
-      thisProduct.priceElem.innerHTML = price;
+      thisProduct.dom.priceElem.innerHTML = price;
     }
 
     initAmountWidget(){
       const thisProduct = this;
-      thisProduct.amountWidget = new AmountWidget(thisProduct.amountWidgetElement);
-      thisProduct.amountWidgetElement.addEventListener('updated', function(){
+      thisProduct.amountWidget = new AmountWidget(thisProduct.dom.amountWidgetElement);
+      thisProduct.dom.amountWidgetElement.addEventListener('updated', function(){
         thisProduct.processOrder();
       })
     }
@@ -291,6 +319,32 @@ const select = {
     }
   }
 
+  class Cart {
+    constructor(element){
+      const thisCart = this;
+      thisCart.products = [];
+
+      thisCart.getElelments(element);
+      thisCart.initActions();
+      console.log('new cart: ', thisCart);
+    }
+
+    getElelments(element){
+      const thisCart = this;
+      thisCart.dom = {};
+      thisCart.dom.wrapper = element;
+
+      thisCart.dom.toggleTrigger = thisCart.dom.wrapper.querySelector(select.cart.toggleTrigger);
+    }
+
+    initActions(){
+      const thisCart = this;
+      thisCart.dom.toggleTrigger.addEventListener('click', function(){
+        thisCart.dom.wrapper.classList.toggle(classNames.cart.wrapperActive);
+      })
+    }
+  }
+
 //  obiekt, który pomoże nam w organizacji kodu naszej aplikacji
   const app = {
     initMenu: function(){
@@ -309,6 +363,13 @@ const select = {
       thisApp.data = dataSource;
     },
 
+    initCart: function(){
+      const thisApp = this;
+
+      const cartElem = document.querySelector(select.containerOf.cart);
+      thisApp.cart = new Cart(cartElem);
+    },
+
     init: function(){
       const thisApp = this;
       console.log('*** App starting ***');
@@ -320,6 +381,7 @@ const select = {
 
       thisApp.initData();
       thisApp.initMenu();
+      thisApp.initCart();
     },
   };
 
