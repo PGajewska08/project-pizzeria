@@ -181,6 +181,7 @@ const settings = {
       thisProduct.dom.cartButton.addEventListener('click', function(event){
         event.preventDefault();
         thisProduct.processOrder();
+        thisProduct.addToCart();
       });
     }
 
@@ -233,6 +234,7 @@ const settings = {
       //multiply price by amount
       price *= thisProduct.amountWidget.value;
       //update calculated price in the html
+      thisProduct.priceSingle = price;
       thisProduct.dom.priceElem.innerHTML = price;
     }
 
@@ -243,6 +245,69 @@ const settings = {
         thisProduct.processOrder();
       })
     }
+
+    // PRZYGOTOWANIE PARAMETRÓW PRODUKTU
+    prepareCartProductParams(){
+      const thisProduct = this;
+      const productParams = {};
+       
+      const formData = utils.serializeFormToObject(thisProduct.dom.form); //dane z formularzy - ktore są zaznaczone
+
+      // dla każdej kategorii np. sos, dodatki, typ kawy
+      for(let paramId in thisProduct.data.params){
+
+        const param = thisProduct.data.params[paramId];
+        //console.log('param: ',param); // cały obiekt kategorii
+        //console.log('paramID: ',paramId); // nazwa kategorii
+        productParams[paramId] = {
+          label: param.label,
+          options: {}
+        }
+        //console.log('productParams[',paramId,']: ',productParams[paramId]);
+        // dla każdej opcji w kategorii
+        for(let optionId in param.options) {
+          
+          const option = param.options[optionId];
+          //console.log('option: ', option); // cały obiekt opcji {
+                                              //"label": "Sour cream",
+                                              //"price": 2
+                                              // }
+          //console.log('optionID: ', optionId); // nazwa opcji
+          const optionSelected = formData[paramId] && formData[paramId].includes(optionId);
+
+          if(optionSelected) {
+            // console.log('option selected: ',optionId);
+             productParams[paramId].options[optionId] = option.label;
+          }
+        }
+      }
+     console.log('prepared params: ',productParams);
+      return productParams;
+      
+    }
+
+    //PRZYGOTOWANIE OBIEKTU Z POTRZEEBNYMI INFORMACJAMI O PRODUKCIE DODAWANYM DO KOSZYKA
+    prepareCartProduct(){
+      const thisProduct = this;
+      const productSummary = {};
+      productSummary.id = thisProduct.id;
+      productSummary.name = thisProduct.data.name;
+      productSummary.amount = thisProduct.amountWidget.value;
+      productSummary.priceSingle = thisProduct.priceSingle;
+      productSummary.price = thisProduct.priceSingle*thisProduct.amountWidget.value;
+      productSummary.params = this.prepareCartProductParams();
+
+      return productSummary;
+    } 
+ 
+
+    // DODAJ PRODUKT DO KOSZYKA
+    addToCart(){
+      const thisProduct = this;
+
+      app.cart.add(thisProduct.prepareCartProduct());
+      //console.log('prepareCArtProduct: ',thisProduct.prepareCartProduct());
+    }
   }
 
   class AmountWidget {
@@ -250,8 +315,8 @@ const settings = {
       const thisWidget = this;
 
       
-      console.log('AmountWidget: ', thisWidget);
-      console.log('constructor arguments: ', element);
+      //console.log('AmountWidget: ', thisWidget);
+      //console.log('constructor arguments: ', element);
 
       thisWidget.getElements(element);
 
@@ -286,7 +351,7 @@ const settings = {
         if( (newValue >= settings.amountWidget.defaultMin) && (newValue <= settings.amountWidget.defaultMax) ){
           thisWidget.value = newValue;
           thisWidget.announce();
-          console.log('newValue: ',newValue);
+          //console.log('newValue: ',newValue);
         }
       }
       else{
@@ -326,13 +391,14 @@ const settings = {
 
       thisCart.getElelments(element);
       thisCart.initActions();
-      console.log('new cart: ', thisCart);
+      //console.log('new cart: ', thisCart);
     }
 
     getElelments(element){
       const thisCart = this;
       thisCart.dom = {};
       thisCart.dom.wrapper = element;
+      thisCart.dom.productList = document.querySelector(select.cart.productList); 
 
       thisCart.dom.toggleTrigger = thisCart.dom.wrapper.querySelector(select.cart.toggleTrigger);
     }
@@ -343,6 +409,18 @@ const settings = {
         thisCart.dom.wrapper.classList.toggle(classNames.cart.wrapperActive);
       })
     }
+
+    add(menuProduct){
+      const thisCart = this;
+      const mProduct = menuProduct;
+     // console.log('mProduct: ',mProduct);
+      const generatedHTML = templates.cartProduct(mProduct);
+     // console.log(generatedHTML);
+      const generatedDOM = utils.createDOMFromHTML(generatedHTML);
+      //console.log(generatedDOM);
+      thisCart.dom.productList.appendChild(generatedDOM);
+      //console.log(thisCart.dom.productList);
+    }
   }
 
 //  obiekt, który pomoże nam w organizacji kodu naszej aplikacji
@@ -350,7 +428,7 @@ const settings = {
     initMenu: function(){
       const thisApp = this;
 
-      console.log('thisApp.data: ',thisApp.data);
+      //console.log('thisApp.data: ',thisApp.data);
 
       for(let productData in thisApp.data.products){
         new Product(productData, thisApp.data.products[productData]);
