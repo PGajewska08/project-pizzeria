@@ -73,6 +73,11 @@ const settings = {
   cart: {
     defaultDeliveryFee: 20,
   },
+  db: {
+    url: '//localhost:3131',
+    products: 'products',
+    orders: 'orders',
+  },
 }
 
 //  szablony Handlebars, do których wykorzystujemy selektory z obiektu select
@@ -406,6 +411,12 @@ const settings = {
       thisCart.dom.subtotalPrice = thisCart.dom.wrapper.querySelector(select.cart.subtotalPrice);
       thisCart.dom.totalPrice = thisCart.dom.wrapper.querySelectorAll(select.cart.totalPrice);
       thisCart.dom.totalNumber = thisCart.dom.wrapper.querySelector(select.cart.totalNumber);
+
+      thisCart.dom.form = thisCart.dom.wrapper.querySelector(select.cart.form);
+     // thisCart.dom.formSubmit = thisCart.dom.wrapper.querySelector(select.cart.formSubmit);
+     thisCart.dom.address = thisCart.dom.wrapper.querySelector(select.cart.address);
+     thisCart.dom.phone = thisCart.dom.wrapper.querySelector(select.cart.phone);
+
     }
 
     initActions(){
@@ -420,6 +431,64 @@ const settings = {
 
       thisCart.dom.productList.addEventListener('remove', function(event){
         thisCart.remove(event.detail.cartProduct);
+      });
+
+      thisCart.dom.form.addEventListener('submit', function(event){
+        event.preventDefault();
+        thisCart.sendOrder();
+        //console.log('send');
+      });
+    }
+    
+    sendOrder(){
+      const thisCart = this;
+      //console.log('function sendOrder()');
+      const url = settings.db.url + '/' + settings.db.orders;
+      //console.log('url: ',url);
+      const address = thisCart.dom.address.value;
+      const phone = thisCart.dom.phone.value;
+      //console.log('address: ', address);
+      //console.log('phone: ', phone);
+
+      const totalPrice = thisCart.totalPrice;
+      //console.log('totalPrice: ', totalPrice);
+
+      const subtotalPrice = thisCart.subtotalPrice;
+      //console.log('subtotalPrice: ', subtotalPrice);
+
+      const totalNumber = thisCart.totalNumber;
+      //console.log('totalNumber: ', totalNumber);
+
+      const deliveryFee = thisCart.deliveryFee;
+      //console.log('deliveryFee: ', deliveryFee);
+
+      const payload = {
+        address: address,
+        phone: phone,
+        totalPrice: totalPrice,
+        subtotalPrice: subtotalPrice,
+        totalNumber: totalNumber,
+        deliveryFee: deliveryFee,
+        products: [],
+      }
+      for(let prod of thisCart.products){
+        payload.products.push(prod.getData());
+      }
+      //console.log('payload: ', payload);
+
+      // fetch
+      const options = {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      };
+      fetch(url, options)
+      .then(function(response){
+        return response.json();
+      }).then(function(parsedResponse){
+        console.log('parsedResponse: ', parsedResponse);
       });
     }
 
@@ -438,8 +507,8 @@ const settings = {
       thisCart.products.push(new CartProduct(mProduct,generatedDOM));
      // console.log('thisCart.products: ', thisCart.products);
      thisCart.update();
-     console.log('tablica produktów: ', thisCart.products);
-     console.log('DOM productList: ',thisCart.dom.productList);
+    // console.log('tablica produktów: ', thisCart.products);
+     //console.log('DOM productList: ',thisCart.dom.productList);
     
     }
 
@@ -472,6 +541,9 @@ const settings = {
         totalPriceElement.innerHTML = thisCart.totalPrice;
       }
      // thisCart.dom.totalPrice.innerHTML = thisCart.totalPrice;
+     thisCart.totalNumber = totalNumber;
+     thisCart.subtotalPrice = subtotalPrice;
+     thisCart.deliveryFee = deliveryFee;
     }
 
     remove(cartProduct){
@@ -479,8 +551,8 @@ const settings = {
       //console.log('this cart: ', thisCart);
      
       const indexOfCartProduct = thisCart.products.indexOf(cartProduct);
-      const removedCartProduct = thisCart.products.splice(indexOfCartProduct,1);
-      console.log('usunięto: ', removedCartProduct);
+      thisCart.products.splice(indexOfCartProduct,1);
+      //console.log('usunięto: ', removedCartProduct);
      // console.log('tablica produktów po usunięciu: ', thisCart.products);
      const elementToRemove = cartProduct.dom.wrapper;
      elementToRemove.remove();
@@ -541,7 +613,7 @@ const settings = {
         },
       });
       thisCartPoduct.dom.wrapper.dispatchEvent(event);
-      console.log('removed');
+      //console.log('removed');
     }
 
     initActions(){
@@ -554,6 +626,19 @@ const settings = {
         thisCartPoduct.remove();
       });
     }
+
+    getData(){
+      const thisCartPoduct = this;
+      const data = {
+        id: thisCartPoduct.id,
+        amount: thisCartPoduct.amount,
+        price: thisCartPoduct.price,
+        priceSingle: thisCartPoduct.priceSingle,
+        name: thisCartPoduct.name,
+        params: thisCartPoduct.params,
+      }
+      return data;
+    }
   }
 
 //  obiekt, który pomoże nam w organizacji kodu naszej aplikacji
@@ -564,14 +649,31 @@ const settings = {
       //console.log('thisApp.data: ',thisApp.data);
 
       for(let productData in thisApp.data.products){
-        new Product(productData, thisApp.data.products[productData]);
+        new Product(thisApp.data.products[productData].id, thisApp.data.products[productData]);
       }
     },
 
     initData: function(){
       const thisApp = this;
 
-      thisApp.data = dataSource;
+      thisApp.data = {};
+
+      const url = settings.db.url + '/' + settings.db.products;
+
+      fetch(url)
+        .then(function(rawResponse){
+          return rawResponse.json();
+        })
+        .then(function(parsedResponse){
+          //console.log('parsedResponse', parsedResponse);
+
+          // Save parsedResponse as thisApp.data.products
+          thisApp.data.products = parsedResponse;
+
+          // Execute initMenu method
+          thisApp.initMenu();
+        });
+      //console.log('thisApp.data', JSON.stringify(thisApp.data));
     },
 
     initCart: function(){
@@ -591,7 +693,7 @@ const settings = {
       console.log('..........................................');
 
       thisApp.initData();
-      thisApp.initMenu();
+      //thisApp.initMenu();
       thisApp.initCart();
     },
   };
