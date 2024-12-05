@@ -173,6 +173,11 @@
         }
   
       }
+      
+      &.selected {
+        color: $color-selected-font;
+        background-color: $color-selected-background;
+      }
     }
   
     [data-table="1"] {

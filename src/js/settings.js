@@ -41,8 +41,15 @@ export const select = {
       },
       booking: {
         peopleAmount: '.people-amount',
+        peopleAmountValue: '.people-amount [name="people"]',
         hoursAmount: '.hours-amount',
+        hoursAmountValue: '.hours-amount [name="hours"]',
         tables: '.floor-plan .table',
+        tablesWrapper: '.floor-plan',
+        bookingForm: '.booking-form',
+        phone: '[name="phone"]',
+        address: '[name="address"]',
+        starters: '.starters',
       },
       nav: {
         links: '.main-nav a',
@@ -56,8 +63,7 @@ export const select = {
         deliveryFee: '.cart__order-delivery .cart__order-price-sum strong',
         form: '.cart__order',
         formSubmit: '.cart__order [type="submit"]',
-        phone: '[name="phone"]',
-        address: '[name="address"]',
+        
       },
       cartProduct: {
         amountWidget: '.widget-amount',
