@@ -2,13 +2,16 @@
  import Product from './components/Product.js';
  import Cart from './components/Cart.js';
  import Booking from './components/Booking.js';
+ import Flickity from './components/Flickity.js';
  const app = {
     initPages: function(){
       const thisApp = this;
       thisApp.pages = document.querySelector(select.containerOf.pages).children;
       thisApp.navLinks = document.querySelectorAll(select.nav.links);
+      thisApp.tilesLinks= document.querySelectorAll(select.home.links);
 
       const idFromHash = window.location.hash.replace('#/','');
+     
       //console.log('idFromHash', idFromHash);
 
       let pageMatchingHash = thisApp.pages[0].id;
@@ -16,13 +19,28 @@
       for(let page of thisApp.pages){
         if(page.id == idFromHash){
           pageMatchingHash = page.id;
-          console.log(pageMatchingHash);
+          console.log('pageMatchingHash', pageMatchingHash);
           break;
         }
       }
       thisApp.activatePage(idFromHash);
 
       for(let link of thisApp.navLinks){
+        link.addEventListener('click', function(event){
+          const clickedElement = this;
+          event.preventDefault();
+
+          // get page id from href attribute
+          const id = clickedElement.getAttribute('href').replace('#','');
+          // run thisApp.activatePage with that id
+
+          thisApp.activatePage(id);
+
+          // change URL hash
+          window.location.hash = '#/' + id;
+        });
+      }
+      for(let link of thisApp.tilesLinks){
         link.addEventListener('click', function(event){
           const clickedElement = this;
           event.preventDefault();
@@ -44,12 +62,6 @@
 
       // add class "active" to matching pages, remove from non-matching
       for(let page of thisApp.pages){
-        // if(page.id == pageId){
-        //   page.classList.add(classNames.pages.active);
-        // } else{
-        //   page.classList.remove(classNames.pages.active);
-        // }
-        // skrócona wersja powyższego ifa:
         page.classList.toggle(classNames.pages.active, page.id == pageId);
       }
       for(let link of thisApp.navLinks){
@@ -113,6 +125,17 @@
       console.log('new booking: ', booking);
     },
 
+    initCarousel: function(){
+      const elem = document.querySelector('.main-carousel');
+      const flkty = new Flickity( elem, {
+      // options
+      cellAlign: 'left',
+      contain: true,
+      });
+      
+      console.log(flkty);
+    }, 
+
     init: function(){
       const thisApp = this;
       // console.log('*** App starting ***');
@@ -121,7 +144,7 @@
       // console.log('settings:', settings);
       // console.log('templates:', templates);
       // console.log('..........................................');
-
+      
       thisApp.initPages();
 
       thisApp.initData();
@@ -129,6 +152,9 @@
       thisApp.initCart();
 
       thisApp.initBooking();
+
+      thisApp.initCarousel();
+      thisApp.activatePage('home');
     },
   };
 

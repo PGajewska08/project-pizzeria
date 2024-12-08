@@ -5,14 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Pizzeria</title>
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.0.0/css/all.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
   <link href="https://fonts.googleapis.com/css?family=Lato:400,300i,700%7COswald:300,500,700&amp;subset=latin-ext" rel="stylesheet">
-  <link href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" rel="stylesheet">
   <link rel="stylesheet" href="vendor/range-slider.min.css">
+  <link rel="stylesheet" href="sass/partials/flickity.scss" media="screen">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-
   <header class="header">
     <div class="container">
       <div class="header__wrapper">
@@ -21,6 +21,7 @@
           <h2 class="logo__subtitle">the best homemade Italian food</h2>
         </div>
         <div class="main-nav">
+          <a href="#home">Home</a>
           <a href="#order">Order</a>
           <a href="#booking">Booking</a>
         </div>
@@ -60,8 +61,147 @@
       </div>
     </div>
   </header>
-
   <div id="pages">
+    <section id="home">
+      <div class="container tiles">
+        <section name="tiles">
+          <div class="tiles">
+            <div class="tile">
+              <div class="tile-img left">
+                <a href="#order">
+                  <img src="images/assets/pizza-1.jpg" alt="pizza1">
+                  <h2>order online</h2>
+                </a>
+              </div>
+            </div>
+            <div class="tile">
+              <div class="tile-img right">
+                <a href="#booking">
+                  <img src="images/assets/pizza-2.jpg" alt="pizza2">
+                  <h2>book a table</h2>
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="info-opening-hours">
+            <h2>opening hours</h2>
+            <p>thue-sun, 12 pm- 12 am </p>
+          </div>
+        </section>
+      </div>
+      <section name="carousel">
+        <div class="container carousel" data-flickity='{ "autoPlay": true }'>
+          <div class="carousel-cell">
+            <div class="carousel-image carousel-element">
+              <img src="images/assets/pizza-3.jpg" alt="pizza-3">
+            </div>
+            <div class="carousel-description carousel-element">
+              <h2>Great venue</h2>
+              <p>
+                Lorem ipsum dolor sit amet consectetur adipisicing elit.
+              </p>
+                <span class="author">~ Jan Kowalski</span>
+            </div>
+          </div>
+          <div class="carousel-cell">
+            <div class="carousel-image carousel-element">
+              <img src="images/assets/pizza-3.jpg" alt="pizza-3">
+            </div>
+            <div class="carousel-description carousel-element">
+              <h2>Best service</h2>
+              <p>
+                Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                Dolorum sit ipsum quod doloremque earum, laudantium dicta vitae quisquam
+                error laborum!
+              </p>
+                <span class="author">~ Anna Nowak</span>
+            </div>
+          </div>
+          <div class="carousel-cell">
+            <div class="carousel-image carousel-element">
+              <img src="images/assets/pizza-3.jpg" alt="pizza-3">
+            </div>
+            <div class="carousel-description carousel-element">
+              <h2>Good snacks</h2>
+              <p>
+                Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                Dolorum sit ipsum quod doloremque earum, laudantium dicta vitae quisquam
+                error laborum!
+              </p>
+                <span class="author">~ Bożena Dykiel</span>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section name="gallery">
+        <div class="gallery container">
+          <div class="gallery-row">
+            <div class="gallery-element">
+              <div class="icons">
+                <a href="#"><i class="fa-solid fa-heart"></i>like</a>
+                <a href="#"><i class="fa-solid fa-share-nodes"></i>share</a>
+              </div>
+              <div class="gallery-image">
+                <img src="images/assets/pizza-4.jpg" alt="pizza-4">
+              </div>
+              <div class="overlay"></div>
+            </div>
+            <div class="gallery-element">
+              <div class="icons">
+                <a href="#"><i class="fa-solid fa-heart"></i>like</a>
+                <a href="#"><i class="fa-solid fa-share-nodes"></i>share</a>
+              </div>
+              <div class="gallery-image">
+                <img src="images/assets/pizza-5.jpg" alt="pizza-5">
+              </div>
+              <div class="overlay"></div>
+            </div>
+            <div class="gallery-element">
+              <div class="icons">
+                <a href="#"><i class="fa-solid fa-heart"></i>like</a>
+                <a href="#"><i class="fa-solid fa-share-nodes"></i>share</a>
+              </div>
+              <div class="gallery-image">
+                <img src="images/assets/pizza-6.jpg" alt="pizza-6">
+              </div>
+              <div class="overlay"></div>
+            </div>
+          </div>
+          <div class="gallery-row">
+            <div class="gallery-element">
+              <div class="icons">
+                <a href="#"><i class="fa-solid fa-heart"></i>like</a>
+                <a href="#"><i class="fa-solid fa-share-nodes"></i>share</a>
+              </div>
+              <div class="gallery-image">
+                <img src="images/assets/pizza-7.jpg" alt="pizza-7">
+                <div class="overlay"></div>
+              </div>
+            </div>
+            <div class="gallery-element">
+              <div class="icons">
+                <a href="#"><i class="fa-solid fa-heart"></i>like</a>
+                <a href="#"><i class="fa-solid fa-share-nodes"></i>share</a>
+              </div>
+              <div class="gallery-image">
+                <img src="images/assets/pizza-8.jpg" alt="pizza-8">
+              </div>
+              <div class="overlay"></div>
+            </div>
+            <div class="gallery-element">
+              <div class="icons">
+                <a href="#"><i class="fa-solid fa-heart"></i>like</a>
+                <a href="#"><i class="fa-solid fa-share-nodes"></i>share</a>
+              </div>
+              <div class="gallery-image">
+                <img src="images/assets/pizza-9.jpg" alt="pizza-9">
+              </div>
+              <div class="overlay"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </section>
     <section id="order">
       <div id="product-list" class="product-list container"></div>
     </section>
@@ -69,7 +209,6 @@
       <div class="booking-wrapper container"></div>
     </section>
   </div>
-
   <script id="template-cart-product" type="text/x-handlebars-template">
     <li>
       <div class="widget-amount"> <!-- widget-amount -->
@@ -98,8 +237,6 @@
     </li>
     
   </script>
-
-
   <script id="template-menu-product" type="text/x-handlebars-template">
     <article class="product"> <!-- product -->
 
@@ -243,10 +380,10 @@
       </form>
     </div>
   </script>
-
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.1.0/handlebars.min.js"></script>
   <script src="vendor/range-slider.min.js"></script>
+  <script src="js/components/flickity.pkgd.js"></script>
   <script src="js/app.js" type="module"></script>
 </body>
 </html>

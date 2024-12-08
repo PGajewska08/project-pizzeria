@@ -1,0 +1,157 @@
+.container.tiles {
+    margin-top: 50px;
+}
+
+.info-opening-hours {
+    background-color: $color-main;
+    text-align: center;
+    width: 100%;
+    margin-top: 10px;
+    height: 100px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    padding: 10px;
+
+    h2, p {
+        padding: 0;
+        margin: 0px;
+        text-transform: uppercase;
+        color: $color-light;
+
+    }
+}
+
+.tiles {
+    display: flex;
+    align-items: center;
+}
+
+.tile {
+    margin: 0;
+    flex: 1 0 0;
+    position: relative;
+    
+}
+
+.tile-img {
+    //width: 50%;
+    height: 100px;
+    overflow: hidden;
+    
+    
+    &.left {
+        margin-right: 10px;
+    }
+    img {
+        object-fit: cover;
+        width: 100%;
+        z-index: 1;
+        bottom: 55px;
+        position: relative;
+    }
+    h2 {
+        position: absolute;
+        top: 40%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: $color-light;
+        text-transform: uppercase;
+        transition: all 1s 0.05s;
+        z-index: 4;
+    }
+    h2:hover {
+        top: 15px;
+        cursor: pointer;
+    }
+    
+}
+
+.gallery {
+    display: flex;
+    flex-direction: column;
+    margin-top: 80px;
+    margin-bottom: 20px;
+    a {
+        text-decoration: none;
+        color: $color-main;
+        font-size: 0;
+    }
+    a:hover i{
+        cursor: pointer;
+        color: red;
+
+    }
+}
+.gallery-row {
+    display: flex;
+    flex-direction: row;
+    //height: 100px;
+    margin-top: 8px;
+    margin-right: 8px;
+}
+
+.gallery-element {
+    position: relative;
+    width: 33%;
+    height: 200px;
+    margin-left: 8px;
+    transition: 2s;
+}
+
+
+.gallery-image{
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+    border-radius: 10px;
+    z-index: 9;
+    img {
+        height: 333px;
+        object-fit: cover;
+        z-index: 8;
+    }
+}
+
+.icons {
+    position: absolute;
+    z-index: 1;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 20px;
+    color: $color-main;
+    opacity: 0;
+    a {
+        font-size: 0;
+    }
+    i {
+        margin-left: 5px;
+        margin-right: 5px;
+        z-index: 1;
+        font-size: 20px;
+    }
+}
+.overlay {
+    position: absolute;
+    bottom: 0px;
+    background-color: $color-dark;
+    width: 100%;
+    height: 200px;
+    border-radius: 10px;
+    z-index: 0;
+    opacity: 0;
+}
+.gallery-element:hover  {
+    .icons{
+        opacity: 100;
+        transition: all 0.5s 0.05s;
+    }
+    .overlay {
+        opacity: 0.5;
+        transition: all 0.5s 0.05s;
+    }
+}
+
+
